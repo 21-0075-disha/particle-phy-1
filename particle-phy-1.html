@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.17"></script>
     <script>
       let m = document.getElementById("pr_bg").getContext("2d");
-      //draws the particles
+      //rule to draw the particles
       draw = (x,y,c,s) => {
         m.fillStyle=c;
         m.fillRect(x,y,s,s);
@@ -45,10 +45,9 @@
         }
         return group;
       }
-      /* the rule below is based on Newton's Law of Gravitation
-         and Newton's Second Law
-      */
-      rule = (particles1, particles2, g) => {
+      /* Coulomb's law as in the case of
+        charged particles */
+      rule = (particles1, particles2, q) => {
         for(let i = 0; i < particles1.length; i++) {
           fx=0; fy=0;
           for(let j = 0; j < particles2.length; j++) {
@@ -58,7 +57,7 @@
             dy=a.y-b.y;
             d=Math.sqrt(dx*dx + dy*dy);
             if(d > 0 && d < 80) {
-              F = g * 1/d;
+              F = q * 1/d;
               fx += (F*dx);
               fy += (F*dy);
             }
@@ -72,20 +71,21 @@
           if(a.y < 0 || a.y > 500) { a.vy = a.vy * -1; }
         }
       }
-
       //choose any color and create the particles!
       yellow = create(200, "yellow");
       green = create(200, "green");
-      //red = create(200, "red");
+      red = create(200, "red");
 
       update = () => {
-        /* this runs repeatedly
-           apply the rules down below!
+        /* apply the rules down below!
+           in 3rd arg of rule
+           sign: - to attract, + to repel
         */
         rule(green, green, -0.1);
         rule(green, yellow, -0.01);
         rule(yellow, green, 0.01);
-        //rule(red, red, 10);
+        rule(red, yellow, -1);
+        //shows the particles as desired
         m.clearRect(0, 0, 500, 500);
         draw(0, 0, "black",  500);
         for(let i = 0; i < particles.length; i++) {
